@@ -1,5 +1,8 @@
 package main;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
@@ -48,35 +51,45 @@ public class Engine extends JFrame {
 	
 	public Engine(String msg) {
 		super(msg);
-		this.setLocation(50,100);
-		this.setSize(300,400);
-		this.setVisible(true);
-		this.frame = new JFrame();
-		JPanel contentPanel = new JPanel();
-		JPanel displayPanel = new JPanel();
-		JPanel buttonPanel = new JPanel();
-		JTextField display = new JTextField();
-		JButton n0 = new JButton();
-		JButton n1 = new JButton();
-		JButton n2 = new JButton();
-		JButton n3 = new JButton();
-		JButton n4 = new JButton();
-		JButton n5 = new JButton();
-		JButton n6 = new JButton();
-		JButton n7 = new JButton();
-		JButton n8 = new JButton();
-		JButton n9 = new JButton();
-		JButton divide = new JButton();
-		JButton multiply = new JButton();
-		JButton subtract = new JButton();
-		JButton add = new JButton();
-		JButton equal = new JButton();
-		JButton reset = new JButton();
 		
+		this.frame = new JFrame();
+		this.contentPanel = new JPanel();
+		this.displayPanel = new JPanel();
+		this.buttonPanel = new JPanel();
+		this.display = new JTextField();
+		this.n0 = new JButton();
+		this.n1 = new JButton();
+		this.n2 = new JButton();
+		this.n3 = new JButton();
+		this.n4 = new JButton();
+		this.n5 = new JButton();
+		this.n6 = new JButton();
+		this.n7 = new JButton();
+		this.n8 = new JButton();
+		this.n9 = new JButton();
+		this.divide = new JButton();
+		this.multiply = new JButton();
+		this.subtract = new JButton();
+		this.add = new JButton();
+		this.equal = new JButton();
+		this.reset = new JButton();
+		setSettings();
+		addActionEvent();
 	}
 	
 	public void setSettings() {
-		
+	    // Configuración del marco de la ventana
+	    this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.frame.setLocation(50, 100);
+	    this.frame.setSize(300, 400);
+	    this.frame.setLayout(new BorderLayout());
+
+	    // Configuración del panel 
+	    this.contentPanel.setLayout(new BorderLayout());
+	    this.frame.setContentPane(this.contentPanel);
+
+	    // Configuración de visibilidad
+	    this.frame.setVisible(true);
 	}
 	
 	public void setFeaturesButton(JButton _button, ButtonType _type) {
