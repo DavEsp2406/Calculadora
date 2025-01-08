@@ -1,16 +1,18 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class Engine extends JFrame {
+public class Engine extends JFrame implements ActionListener {
 
 	// Marco de la ventana
 	private JFrame frame;
@@ -53,51 +55,109 @@ public class Engine extends JFrame {
 		super(msg);
 		
 		this.frame = new JFrame();
-		this.contentPanel = new JPanel();
-		this.displayPanel = new JPanel();
-		this.buttonPanel = new JPanel();
-		this.display = new JTextField();
-		this.n0 = new JButton();
-		this.n1 = new JButton();
-		this.n2 = new JButton();
-		this.n3 = new JButton();
-		this.n4 = new JButton();
-		this.n5 = new JButton();
-		this.n6 = new JButton();
-		this.n7 = new JButton();
-		this.n8 = new JButton();
-		this.n9 = new JButton();
-		this.divide = new JButton();
-		this.multiply = new JButton();
-		this.subtract = new JButton();
-		this.add = new JButton();
-		this.equal = new JButton();
-		this.reset = new JButton();
+        this.contentPanel = new JPanel();
+        this.displayPanel = new JPanel();
+        this.buttonPanel = new JPanel();
+        this.display = new JTextField();
+        this.n0 = new JButton("0");
+        this.n1 = new JButton("1");
+        this.n2 = new JButton("2");
+        this.n3 = new JButton("3");
+        this.n4 = new JButton("4");
+        this.n5 = new JButton("5");
+        this.n6 = new JButton("6");
+        this.n7 = new JButton("7");
+        this.n8 = new JButton("8");
+        this.n9 = new JButton("9");
+        this.divide = new JButton("÷");
+        this.multiply = new JButton("x");
+        this.subtract = new JButton("-");
+        this.add = new JButton("+");
+        this.equal = new JButton("=");
+        this.reset = new JButton("C");
+        
 		setSettings();
-		addActionEvent();
+		addActionEvent(null);
 	}
 	
 	public void setSettings() {
-	    // Configuración del marco de la ventana
-	    this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    this.frame.setLocation(50, 100);
-	    this.frame.setSize(300, 400);
-	    this.frame.setLayout(new BorderLayout());
+		// Configuración del marco de la ventana
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setLocation(50, 100);
+        this.frame.setSize(300, 400);
+        this.frame.setLayout(new BorderLayout());
 
-	    // Configuración del panel 
-	    this.contentPanel.setLayout(new BorderLayout());
-	    this.frame.setContentPane(this.contentPanel);
+        // Configuración del panel general
+        this.contentPanel.setLayout(new BorderLayout());
+        this.frame.setContentPane(this.contentPanel);
 
-	    // Configuración de visibilidad
-	    this.frame.setVisible(true);
+        // Configuración del panel del display (Norte)
+        this.displayPanel.setLayout(new BorderLayout()); 
+        this.display.setHorizontalAlignment(JTextField.RIGHT);
+        this.display.setEditable(false);
+        this.display.setFont(new Font("Arial", Font.BOLD, 40));
+        this.displayPanel.add(this.display, BorderLayout.CENTER);
+        this.contentPanel.add(this.displayPanel, BorderLayout.NORTH);
+
+        // Configuración del panel de botones (Sur)
+        this.buttonPanel.setLayout(new GridLayout(4, 4, 5, 5));
+        this.contentPanel.add(this.buttonPanel, BorderLayout.CENTER);
+
+        // Creación y adición de los botones
+        JButton[] buttons = {
+            this.n7, this.n8, this.n9, this.multiply,
+            this.n4, this.n5, this.n6, this.subtract,
+            this.n1, this.n2, this.n3, this.add,
+            this.reset, this.n0, this.equal, this.divide
+        };
+        
+        JButton[] opeButt = {
+        	this.multiply, this.reset, this.subtract, 
+        	this.divide, this.equal, this.add
+        };
+        
+        JButton[] numButt = {
+        	this.n1, this.n2, this.n3, 
+        	this.n4, this.n5, this.n6, 
+        	this.n7, this.n8, this.n9, 
+        	this.n0
+        };
+        
+        for (JButton butt : opeButt) {
+        	setFeaturesButton(butt, ButtonType.OPERATOR);
+        }
+        for (JButton butt : numButt) {
+        	setFeaturesButton(butt, ButtonType.REGULAR);
+        }
+        
+        for (JButton button : buttons) {
+            button.setFont(new Font("Arial", Font.BOLD, 20));
+            this.buttonPanel.add(button);
+        }
+
+        // Configuración de visibilidad
+        this.frame.setVisible(true);
 	}
 	
 	public void setFeaturesButton(JButton _button, ButtonType _type) {
-		
+		if(_type == ButtonType.OPERATOR) {
+			_button.setBackground(Color.CYAN);
+		}else if(_type == ButtonType.REGULAR) {
+			_button.setBackground(Color.MAGENTA);
+		}
 	}
 	
-	public void addActionEvent() {
-		
+	public void addActionEvent(Engine engine) {
+		this.n0.addActionListener(this);
+		this.n1.addActionListener(this);
+		this.n2.addActionListener(this);
+		this.n3.addActionListener(this);
+		this.n4.addActionListener(this);
+		this.n5.addActionListener(this);
+		this.n6.addActionListener(this);
+		this.n7.addActionListener(this);
+		this.n8.addActionListener(this);
+		this.n9.addActionListener(this);
 	}
 	
 	public void operation() {
