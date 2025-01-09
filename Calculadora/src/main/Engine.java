@@ -50,103 +50,126 @@ public class Engine extends JFrame implements ActionListener {
 	// Almacenar temporalmente ciertos valores
 	private int num1, num2, result;
 	private char operation;
-	
+
+	/*
+	 * Engine(): La constructora debe instanciar, entre otras cosas, los atributos
+	 * que se han mencionado anteriormente. Si añades funcionalidad adicional (ya
+	 * sean acciones o simplemente algunos elementos de diseño), también debería ser
+	 * instanciado en la constructora. Al final de la constructora debe aparecer una
+	 * llamada a setSettings() y addActionEvent().
+	 */
 	public Engine(String msg) {
 		super(msg);
-		
+
 		this.frame = new JFrame();
-        this.contentPanel = new JPanel();
-        this.displayPanel = new JPanel();
-        this.buttonPanel = new JPanel();
-        this.display = new JTextField();
-        this.n0 = new JButton("0");
-        this.n1 = new JButton("1");
-        this.n2 = new JButton("2");
-        this.n3 = new JButton("3");
-        this.n4 = new JButton("4");
-        this.n5 = new JButton("5");
-        this.n6 = new JButton("6");
-        this.n7 = new JButton("7");
-        this.n8 = new JButton("8");
-        this.n9 = new JButton("9");
-        this.divide = new JButton("÷");
-        this.multiply = new JButton("x");
-        this.subtract = new JButton("-");
-        this.add = new JButton("+");
-        this.equal = new JButton("=");
-        this.reset = new JButton("C");
-        
+		this.contentPanel = new JPanel();
+		this.displayPanel = new JPanel();
+		this.buttonPanel = new JPanel();
+		this.display = new JTextField();
+		this.n0 = new JButton("0");
+		this.n1 = new JButton("1");
+		this.n2 = new JButton("2");
+		this.n3 = new JButton("3");
+		this.n4 = new JButton("4");
+		this.n5 = new JButton("5");
+		this.n6 = new JButton("6");
+		this.n7 = new JButton("7");
+		this.n8 = new JButton("8");
+		this.n9 = new JButton("9");
+		this.divide = new JButton("÷");
+		this.multiply = new JButton("x");
+		this.subtract = new JButton("-");
+		this.add = new JButton("+");
+		this.equal = new JButton("=");
+		this.reset = new JButton("C");
+
 		setSettings();
 		addActionEvent(null);
 	}
-	
+
+	/*
+	 * setSettings(): Este método establece la configuración principal de todos los
+	 * componentes visuales de la ventana. Concretamente, se encarga de, entre otras
+	 * cosas: poner los layouts de los paneles y añadirlos, añadir los botones y
+	 * llamar al método setFeaturesButton(), el display, establecer las
+	 * características de los botones, tamaño de la ventana, localización, etc.
+	 */
 	public void setSettings() {
 		// Configuración del marco de la ventana
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setLocation(50, 100);
-        this.frame.setSize(300, 400);
-        this.frame.setLayout(new BorderLayout());
+		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.frame.setLocation(50, 100);
+		this.frame.setSize(300, 400);
+		this.frame.setLayout(new BorderLayout());
 
-        // Configuración del panel general
-        this.contentPanel.setLayout(new BorderLayout());
-        this.frame.setContentPane(this.contentPanel);
+		// Configuración del panel general
+		this.contentPanel.setLayout(new BorderLayout());
+		this.frame.setContentPane(this.contentPanel);
 
-        // Configuración del panel del display (Norte)
-        this.displayPanel.setLayout(new BorderLayout()); 
-        this.display.setHorizontalAlignment(JTextField.RIGHT);
-        this.display.setEditable(false);
-        this.display.setFont(new Font("Arial", Font.BOLD, 40));
-        this.displayPanel.add(this.display, BorderLayout.CENTER);
-        this.contentPanel.add(this.displayPanel, BorderLayout.NORTH);
+		// Configuración del panel del display (Norte)
+		this.displayPanel.setLayout(new BorderLayout());
+		this.display.setHorizontalAlignment(JTextField.RIGHT);
+		this.display.setEditable(false);
+		this.display.setFont(new Font("Arial", Font.BOLD, 40));
+		this.displayPanel.add(this.display, BorderLayout.CENTER);
+		this.contentPanel.add(this.displayPanel, BorderLayout.NORTH);
 
-        // Configuración del panel de botones (Sur)
-        this.buttonPanel.setLayout(new GridLayout(4, 4, 5, 5));
-        this.contentPanel.add(this.buttonPanel, BorderLayout.CENTER);
+		// Configuración del panel de botones (Sur)
+		this.buttonPanel.setLayout(new GridLayout(4, 4, 5, 5));
+		this.contentPanel.add(this.buttonPanel, BorderLayout.CENTER);
 
-        // Creación y adición de los botones
-        JButton[] buttons = {
-            this.n7, this.n8, this.n9, this.multiply,
-            this.n4, this.n5, this.n6, this.subtract,
-            this.n1, this.n2, this.n3, this.add,
-            this.reset, this.n0, this.equal, this.divide
-        };
-        
-        JButton[] opeButt = {
-        	this.multiply, this.reset, this.subtract, 
-        	this.divide, this.equal, this.add
-        };
-        
-        JButton[] numButt = {
-        	this.n1, this.n2, this.n3, 
-        	this.n4, this.n5, this.n6, 
-        	this.n7, this.n8, this.n9, 
-        	this.n0
-        };
-        
-        for (JButton butt : opeButt) {
-        	setFeaturesButton(butt, ButtonType.OPERATOR);
-        }
-        for (JButton butt : numButt) {
-        	setFeaturesButton(butt, ButtonType.REGULAR);
-        }
-        
-        for (JButton button : buttons) {
-            button.setFont(new Font("Arial", Font.BOLD, 20));
-            this.buttonPanel.add(button);
-        }
+		// Creación y adición de los botones
+		JButton[] buttons = { this.n7, this.n8, this.n9, this.multiply, this.n4, this.n5, this.n6, this.subtract,
+				this.n1, this.n2, this.n3, this.add, this.reset, this.n0, this.equal, this.divide };
 
-        // Configuración de visibilidad
-        this.frame.setVisible(true);
+		JButton[] opeButt = { this.multiply, this.reset, this.subtract, this.divide, this.equal, this.add };
+
+		JButton[] numButt = { this.n1, this.n2, this.n3, this.n4, this.n5, this.n6, this.n7, this.n8, this.n9,
+				this.n0 };
+
+		for (JButton butt : opeButt) {
+			setFeaturesButton(butt, ButtonType.OPERATOR);
+		}
+		for (JButton butt : numButt) {
+			setFeaturesButton(butt, ButtonType.REGULAR);
+		}
+
+		for (JButton button : buttons) {
+			button.setFont(new Font("Arial", Font.BOLD, 20));
+			this.buttonPanel.add(button);
+		}
+
+		// Configuración de visibilidad
+		this.frame.setVisible(true);
 	}
-	
+
+	/*
+	 * setFeaturesButton(JButton _button, ButtonType _type): Contiene una condición
+	 * que permite distinguir si el tipo de botón pasa como parámetro es de tipo
+	 * REGULAR u OPERATOR. En función de esto, pintará el botón de un color u otro.
+	 * Puedes añadirle (y es algo que se tendrá en cuenta) más características tales
+	 * como cambio del tipo de letra, bordes, etc.
+	 * 
+	 * • _button identifica el botón sobre el que se van a cambiar las carac-
+	 * terísticas.
+	 * 
+	 * • _type identifica de qué tipo es el botón sobre el que se van a cambiar las
+	 * características.
+	 */
 	public void setFeaturesButton(JButton _button, ButtonType _type) {
-		if(_type == ButtonType.OPERATOR) {
+		if (_type == ButtonType.OPERATOR) {
 			_button.setBackground(Color.CYAN);
-		}else if(_type == ButtonType.REGULAR) {
+		} else if (_type == ButtonType.REGULAR) {
 			_button.setBackground(Color.MAGENTA);
 		}
 	}
-	
+
+	/*
+	 * addActionEvent(): Este método registra los ActionListener para to- dos los
+	 * botones de la aplicación. Es decir, para cada botón, añade un
+	 * 
+	 * ActionListener que recibe como parámetro el objeto this para poder
+	 * identificar el objeto (botón) que se pulsa.
+	 */
 	public void addActionEvent(Engine engine) {
 		this.n0.addActionListener(this);
 		this.n1.addActionListener(this);
@@ -158,13 +181,92 @@ public class Engine extends JFrame implements ActionListener {
 		this.n7.addActionListener(this);
 		this.n8.addActionListener(this);
 		this.n9.addActionListener(this);
+		this.add.addActionListener(this);
+		this.subtract.addActionListener(this);
+		this.divide.addActionListener(this);
+		this.multiply.addActionListener(this);
+		this.equal.addActionListener(this);
+		this.reset.addActionListener(this);
+
 	}
-	
+
+	/*
+	 * operation(): Comprueba qué operación se debe realizar. En otras palabras:
+	 * mira el estado actual del atributo this.operation y, en función de ese valor,
+	 * lleva a cabo una operación u otra (con los atributos this.num1 y this.num2,
+	 * que representan los dos únicos operando que maneja nuestra calculadora),
+	 * modificando el tributo this.result y actualizando el texto en el display.
+	 */
 	public void operation() {
-		
+		switch (this.operation) {
+		case '+':
+			this.result = this.num1 + this.num2;
+			break;
+		case '-':
+			this.result = this.num1 - this.num2;
+			break;
+		case 'x':
+			this.result = this.num1 * this.num2;
+			break;
+		case '÷':
+			this.result = this.num1 / this.num2;
+			break;
+		}
 	}
-	
+
+	/*
+	 * actionPerformed(ActionEvent e): Este método se encarga de obtener la
+	 * información que haya en el display (números introducidos y operación que se
+	 * debe realizar) y llamar al método operation() para ejecutar dicha operación.
+	 * Hay muchas formas de llevar a cabo esta lógica... Piensa cuál podría ser la
+	 * mejor manera de hacerlo. Por ejemplo, una manera podría ser identificar el
+	 * botón que se ha pulsado y añadir su texto al display y, cuando se pulse sobre
+	 * el botón =, entonces hacemos que se ejecute la operación que se haya indicado
+	 * con los botones de operación (sumar, restar, multiplicar o dividir). En
+	 * cualquier caso e independientemente de la decisión que se tome, lo primero
+	 * que debemos hacer en este método es recoger el tipo de botón que se ha
+	 * pulsado (para poder hacer la distinción) y el texto asociado a ese botón.
+	 */
 	public void actionPerformed(ActionEvent e) {
-		
+	    Object source = e.getSource(); // Identificar el botón presionado
+	    String input_text = e.getActionCommand(); // Obtener el texto del botón
+
+	    // Si es un botón numérico, agregar el número al display
+	    if (input_text.matches("-?\\d")) { // Permitir dígitos, incluso negativos
+	        display.setText(display.getText() + input_text); // Concatenar números
+	    }
+	    // Si es un operador, agregar el operador al display
+	    else if (source == add || source == subtract || source == multiply || source == divide) {
+	        display.setText(display.getText() + " " + input_text + " "); // Agregar espacio para separar operadores
+	    }
+	    // Si es el botón de igual, ejecutar la operación
+	    else if (source == equal) {
+	        String input = display.getText();
+	        // Validar la expresión completa con una expresión regular
+	        if (!input.matches("-?\\d+(\\s[+\\-x÷]\\s-?\\d+)+")) {
+	            display.setText("Error"); // Mostrar error si la entrada no es válida
+	            return;
+	        }
+
+	        // Parsear la entrada y realizar la operación
+	        try {
+	            String[] parts = input.split("\\s"); // Dividir en números y operadores
+	            num1 = Integer.parseInt(parts[0]); // Primer número
+	            operation = parts[1].charAt(0); // Operador
+	            num2 = Integer.parseInt(parts[2]); // Segundo número
+	            operation(); // Ejecutar la operación
+	            display.setText(String.valueOf(result)); // Mostrar el resultado
+	        } catch (Exception ex) {
+	            display.setText("Error"); // Mostrar error si algo falla
+	        }
+	    }
+	    // Si es el botón de reinicio, limpiar todo
+	    else if (source == reset) {
+	        num1 = 0;
+	        num2 = 0;
+	        result = 0;
+	        operation = '\0';
+	        display.setText(""); // Limpiar el display
+	    }
 	}
 }
