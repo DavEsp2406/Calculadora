@@ -66,6 +66,10 @@ Este proyecto es una **calculadora gráfica** implementada en Java utilizando la
    - Presiona "=" para calcular el resultado.
    - Usa "C" para limpiar el display.
 
+
+![Video proyecto](assets/demo.gif)
+
+
 ---
 
 ## Personalización
