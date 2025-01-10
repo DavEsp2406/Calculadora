@@ -231,36 +231,56 @@ public class Engine extends JFrame implements ActionListener {
 	    Object source = e.getSource(); // Identificar el botón presionado
 	    String input_text = e.getActionCommand(); // Obtener el texto del botón
 
-	    // Si es un botón numérico, agregar el número al display
-	    if (input_text.matches("-?\\d")) { // Permitir dígitos, incluso negativos
-	        display.setText(display.getText() + input_text); // Concatenar números
-	    }
-	    // Si es un operador, agregar el operador al display
-	    else if (source == add || source == subtract || source == multiply || source == divide) {
-	        display.setText(display.getText() + " " + input_text + " "); // Agregar espacio para separar operadores
-	    }
-	    // Si es el botón de igual, ejecutar la operación
-	    else if (source == equal) {
-	        String input = display.getText();
-	        // Validar la expresión completa con una expresión regular
-	        if (!input.matches("-?\\d+(\\s[+\\-x÷]\\s-?\\d+)+")) {
-	            display.setText("Error"); // Mostrar error si la entrada no es válida
-	            return;
-	        }
+	    // Obtener el texto actual del display
+	    String currentText = display.getText();
 
-	        // Parsear la entrada y realizar la operación
+	    // Si es un botón numérico, agregarlo directamente
+	    if (source == n0 || source == n1 || source == n2 || source == n3 || source == n4 ||
+	        source == n5 || source == n6 || source == n7 || source == n8 || source == n9) {
+	        display.setText(currentText + input_text); // Concatenar número
+	    } 
+	    // Si es el signo "-", tratarlo según el contexto
+	    else if (input_text.equals("-")) {
+	        // Permitir "-" como operador de resta si no es el primer carácter
+	        if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
+	            display.setText(currentText + " " + input_text + " "); // Agregar operador de resta
+	        } 
+	        // Permitir "-" como signo negativo al inicio o después de un operador
+	        else if (currentText.isEmpty() || currentText.matches(".*[+x÷]\\s?$")) {
+	            display.setText(currentText + input_text); // Concatenar signo negativo
+	        }
+	    } 
+	    // Si es un operador (distinto de "-"), agregarlo con validación
+	    else if (source == add || source == multiply || source == divide) {
+	        // Validar que el texto actual no termine con un operador
+	        if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
+	            display.setText(currentText + " " + input_text + " "); // Agregar el operador
+	        }
+	    } 
+	    // Si es el botón igual, calcular el resultado
+	    else if (source == equal) {
 	        try {
-	            String[] parts = input.split("\\s"); // Dividir en números y operadores
+	            // Evaluar la expresión
+	            String input = display.getText();
+	            if (!input.matches("-?\\d+(\\s[+\\-x÷]\\s-?\\d+)+")) {
+	                display.setText("Error"); // Validar que la entrada sea correcta
+	                return;
+	            }
+
+	            String[] parts = input.split("\\s"); // Dividir por espacios
 	            num1 = Integer.parseInt(parts[0]); // Primer número
-	            operation = parts[1].charAt(0); // Operador
-	            num2 = Integer.parseInt(parts[2]); // Segundo número
-	            operation(); // Ejecutar la operación
+	            for (int i = 1; i < parts.length; i += 2) {
+	                operation = parts[i].charAt(0); // Operador
+	                num2 = Integer.parseInt(parts[i + 1]); // Segundo número
+	                operation(); // Ejecutar operación
+	                num1 = result; // Actualizar num1 para operaciones encadenadas
+	            }
 	            display.setText(String.valueOf(result)); // Mostrar el resultado
 	        } catch (Exception ex) {
 	            display.setText("Error"); // Mostrar error si algo falla
 	        }
-	    }
-	    // Si es el botón de reinicio, limpiar todo
+	    } 
+	    // Si es el botón reset, limpiar todo
 	    else if (source == reset) {
 	        num1 = 0;
 	        num2 = 0;
