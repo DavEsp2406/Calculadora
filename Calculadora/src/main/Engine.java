@@ -98,7 +98,7 @@ public class Engine extends JFrame implements ActionListener {
 		this.displayPanel.setLayout(new BorderLayout());
 		this.display.setHorizontalAlignment(JTextField.RIGHT);
 		this.display.setEditable(false);
-		this.display.setFont(new Font("SansSerif", Font.BOLD, 40));
+		this.display.setFont(new Font("SansSerif", Font.PLAIN, 40));
 		this.display.setBackground(Color.LIGHT_GRAY);
 		this.displayPanel.add(this.display, BorderLayout.CENTER);
 
@@ -139,9 +139,10 @@ public class Engine extends JFrame implements ActionListener {
 
 		this.frame.setVisible(true);
 	}
-	
 
 	public void setFeaturesButton(JButton _button, ButtonType _type) {
+		_button.setBorder(BorderFactory.createLineBorder(Color.white));
+		
 		if (_type == ButtonType.OPERATOR) {
 			_button.setFont(new Font("SansSerif", Font.PLAIN, 25));
 			_button.setBackground(new Color(159, 222, 253));
@@ -201,49 +202,40 @@ public class Engine extends JFrame implements ActionListener {
 		Object source = e.getSource();
 		String input_text = e.getActionCommand();
 
-		// Obtener el texto actual del display
 		String currentText = display.getText();
 
-		// Si es un botón numérico, agregarlo directamente
 		if (source == n0 || source == n1 || source == n2 || source == n3 || source == n4 || source == n5 || source == n6
 				|| source == n7 || source == n8 || source == n9) {
-			display.setText(currentText + input_text); // Concatenar número
+			display.setText(currentText + input_text);
 		}
-		// Si es el signo "-", tratarlo según el contexto
 		else if (input_text.equals("-")) {
-			// Permitir "-" como operador de resta si no es el primer carácter
 			if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
-				display.setText(currentText + " " + input_text + " "); // Agregar operador de resta
+				display.setText(currentText + " " + input_text + " ");
 			}
-			// Permitir "-" como signo negativo al inicio o después de un operador
 			else if (currentText.isEmpty() || currentText.matches(".*[+x÷]\\s?$")) {
-				display.setText(currentText + input_text); // Concatenar signo negativo
+				display.setText(currentText + input_text); 
 			}
 		}
-		// Si es un operador (distinto de "-"), agregarlo con validación
 		else if (source == add || source == multiply || source == divide) {
-			// Validar que el texto actual no termine con un operador
 			if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
-				display.setText(currentText + " " + input_text + " "); // Agregar el operador
+				display.setText(currentText + " " + input_text + " "); 
 			}
 		}
-		// Si es el botón igual, calcular el resultado
 		else if (source == equal) {
 			try {
-				// Evaluar la expresión
 				String input = display.getText();
 				if (!input.matches("-?\\d+(\\s[+\\-x÷]\\s-?\\d+)+")) {
-					display.setText("Error"); // Validar que la entrada sea correcta
+					display.setText("Error"); 
 					return;
 				}
 
-				String[] parts = input.split("\\s"); // Dividir por espacios
-				num1 = Integer.parseInt(parts[0]); // Primer número
+				String[] parts = input.split("\\s"); 
+				num1 = Integer.parseInt(parts[0]); 
 				for (int i = 1; i < parts.length; i += 2) {
-					operation = parts[i].charAt(0); // Operador
-					num2 = Integer.parseInt(parts[i + 1]); // Segundo número
-					operation(); // Ejecutar operación
-					num1 = result; // Actualizar num1 para operaciones encadenadas
+					operation = parts[i].charAt(0); 
+					num2 = Integer.parseInt(parts[i + 1]); 
+					operation(); 
+					num1 = result; 
 				}
 			} catch (ArithmeticException zero) {
 				result = 0;
