@@ -67,7 +67,7 @@ Este proyecto es una **calculadora gráfica** implementada en Java utilizando la
    - Usa "C" para limpiar el display.
 
 
-![Video proyecto](assets/demo.gif)
+![Video proyecto](assets/calcu.gif)
 
 
 ---
