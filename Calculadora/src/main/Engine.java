@@ -2,9 +2,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.AbstractBorder;
 
 public class Engine extends JFrame implements ActionListener {
 
@@ -45,6 +42,10 @@ public class Engine extends JFrame implements ActionListener {
 	private JButton add;
 	private JButton equal;
 	private JButton reset;
+	private JButton ans;
+	private JButton raiz;
+	private JButton elevar;
+	private JButton retroceder;
 
 	// Tipos de boton
 	private enum ButtonType {
@@ -53,11 +54,15 @@ public class Engine extends JFrame implements ActionListener {
 
 	// Almacenar temporalmente ciertos valores
 	private int num1, num2, result;
+	private String respuesta;
 	private char operation;
 
-	public Engine(String msg) {
-		super(msg);
-
+	/**
+	 * Constructora de la calculadora
+	 * 
+	 * @param msg
+	 */
+	public Engine() {
 		this.frame = new JFrame();
 		this.contentPanel = new JPanel();
 		this.displayPanel = new JPanel();
@@ -79,11 +84,19 @@ public class Engine extends JFrame implements ActionListener {
 		this.add = new JButton("+");
 		this.equal = new JButton("=");
 		this.reset = new JButton("C");
+		this.ans = new JButton("Ans");
+		this.retroceder = new JButton("⌫");
+		this.raiz = new JButton("√");
+		this.elevar = new JButton("^");
 
 		setSettings();
 		addActionEvent(null);
 	}
 
+	/**
+	 * Este metodo establece la configuracion principal de todos los componentes
+	 * visuales de la ventana.
+	 */
 	public void setSettings() {
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.setLocation(50, 100);
@@ -91,8 +104,8 @@ public class Engine extends JFrame implements ActionListener {
 		this.frame.setLayout(new BorderLayout());
 
 		this.contentPanel.setLayout(new BorderLayout());
-		this.contentPanel.setBackground(Color.lightGray); // Color de fondo visible como marco
-		this.contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Espacio visible en el borde
+		this.contentPanel.setBackground(Color.lightGray);
+		this.contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		this.frame.setContentPane(this.contentPanel);
 
 		this.displayPanel.setLayout(new BorderLayout());
@@ -102,24 +115,21 @@ public class Engine extends JFrame implements ActionListener {
 		this.display.setBackground(Color.LIGHT_GRAY);
 		this.displayPanel.add(this.display, BorderLayout.CENTER);
 
-		JPanel displayContainer = new JPanel(new BorderLayout());
-		displayContainer.add(this.displayPanel, BorderLayout.CENTER);
-		displayContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		displayContainer.setBackground(Color.WHITE);
-		this.contentPanel.add(displayContainer, BorderLayout.NORTH);
+		this.displayPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		this.displayPanel.setBackground(Color.WHITE);
+		this.contentPanel.add(displayPanel, BorderLayout.NORTH);
 
-		this.buttonPanel.setLayout(new GridLayout(4, 4, 5, 5));
-		this.buttonPanel.setBackground(Color.WHITE); // Fondo del panel de botones
+		this.buttonPanel.setLayout(new GridLayout(5, 4, 5, 5));
+		this.buttonPanel.setBackground(Color.WHITE);
+		this.buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		this.contentPanel.add(buttonPanel, BorderLayout.CENTER);
 
-		JPanel buttonContainer = new JPanel(new BorderLayout());
-		buttonContainer.add(this.buttonPanel, BorderLayout.CENTER);
-		buttonContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		this.contentPanel.add(buttonContainer, BorderLayout.CENTER);
+		JButton[] buttons = { this.raiz, this.elevar, this.divide, this.retroceder, this.n7, this.n8, this.n9,
+				this.multiply, this.n4, this.n5, this.n6, this.subtract, this.n1, this.n2, this.n3, this.add,
+				this.reset, this.n0, this.equal, this.ans };
 
-		JButton[] buttons = { this.n7, this.n8, this.n9, this.multiply, this.n4, this.n5, this.n6, this.subtract,
-				this.n1, this.n2, this.n3, this.add, this.reset, this.n0, this.equal, this.divide };
-
-		JButton[] opeButt = { this.multiply, this.reset, this.subtract, this.divide, this.add };
+		JButton[] opeButt = { this.multiply, this.reset, this.subtract, this.divide, this.add, this.ans, this.elevar,
+				this.raiz, this.retroceder, };
 
 		JButton[] numButt = { this.n1, this.n2, this.n3, this.n4, this.n5, this.n6, this.n7, this.n8, this.n9,
 				this.n0 };
@@ -130,7 +140,7 @@ public class Engine extends JFrame implements ActionListener {
 		for (JButton butt : numButt) {
 			setFeaturesButton(butt, ButtonType.REGULAR);
 		}
-		
+
 		setFeaturesButton(this.equal, ButtonType.EQUAL);
 
 		for (JButton button : buttons) {
@@ -140,21 +150,33 @@ public class Engine extends JFrame implements ActionListener {
 		this.frame.setVisible(true);
 	}
 
+	/**
+	 * Metodo que recibe un boton y dependiendo del tipo que sea cambia su aspecto
+	 * 
+	 * @param _button boton que recibe
+	 * @param _type   el tipo del boton que recibe
+	 */
 	public void setFeaturesButton(JButton _button, ButtonType _type) {
 		_button.setBorder(BorderFactory.createLineBorder(Color.white));
-		
+
 		if (_type == ButtonType.OPERATOR) {
-			_button.setFont(new Font("SansSerif", Font.PLAIN, 25));
+			_button.setFont(new Font("SansSerif", Font.BOLD, 15));
 			_button.setBackground(new Color(159, 222, 253));
 		} else if (_type == ButtonType.REGULAR) {
 			_button.setFont(new Font("SansSerif", Font.PLAIN, 20));
 			_button.setBackground(Color.CYAN);
-		}else if (_type == ButtonType.EQUAL) {
+		} else if (_type == ButtonType.EQUAL) {
 			_button.setFont(new Font("SansSerif", Font.BOLD, 20));
-			_button.setBackground(new Color(23,173,247));
+			_button.setBackground(new Color(23, 173, 247));
 		}
 	}
 
+	/**
+	 * Este metodo registra los ActionListener para todos los botones de la
+	 * aplicacion.
+	 * 
+	 * @param engine
+	 */
 	public void addActionEvent(Engine engine) {
 		this.n0.addActionListener(this);
 		this.n1.addActionListener(this);
@@ -172,11 +194,17 @@ public class Engine extends JFrame implements ActionListener {
 		this.multiply.addActionListener(this);
 		this.equal.addActionListener(this);
 		this.reset.addActionListener(this);
+		this.raiz.addActionListener(this);
+		this.elevar.addActionListener(this);
+		this.retroceder.addActionListener(this);
+		this.ans.addActionListener(this);
 
 	}
 
+	/**
+	 * Metodo que comprueba que operacion se tiene que realizar
+	 */
 	public void operation() {
-
 		switch (this.operation) {
 		case '+':
 			this.result = this.num1 + this.num2;
@@ -194,62 +222,77 @@ public class Engine extends JFrame implements ActionListener {
 			this.result = this.num1 / this.num2;
 			display.setText(String.valueOf(result));
 			break;
+		case '√':
+			this.result = (int) Math.sqrt(num1);
+			display.setText(String.valueOf(result));
+			break;
+		case '^':
+			this.result = (int) Math.pow(num1, num2);
+			display.setText(String.valueOf(result));
+			break;
 		}
 
 	}
 
+	/**
+	 * Este metodo se encarga de obtener la informacion que haya en el display
+	 * (numeros introducidos y operacion que se debe realizar) y llamar al metodo
+	 * operation() para ejecutar dicha operacion.
+	 */
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		String input_text = e.getActionCommand();
 
-		String currentText = display.getText();
-
-		if (source == n0 || source == n1 || source == n2 || source == n3 || source == n4 || source == n5 || source == n6
-				|| source == n7 || source == n8 || source == n9) {
-			display.setText(currentText + input_text);
-		}
-		else if (input_text.equals("-")) {
-			if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
-				display.setText(currentText + " " + input_text + " ");
-			}
-			else if (currentText.isEmpty() || currentText.matches(".*[+x÷]\\s?$")) {
-				display.setText(currentText + input_text); 
-			}
-		}
-		else if (source == add || source == multiply || source == divide) {
-			if (!currentText.isEmpty() && !currentText.matches(".*[+x÷-]\\s?$")) {
-				display.setText(currentText + " " + input_text + " "); 
-			}
-		}
-		else if (source == equal) {
-			try {
-				String input = display.getText();
-				if (!input.matches("-?\\d+(\\s[+\\-x÷]\\s-?\\d+)+")) {
-					display.setText("Error"); 
-					return;
+		try {
+			if (source == this.add || source == this.subtract || source == this.divide || source == this.multiply
+					|| source == this.elevar) {
+				if (source == this.subtract) {
+					if (display.getText().isEmpty()
+							|| "+x√÷^ ".contains(display.getText().substring(display.getText().length() - 1))) {
+						display.setText(display.getText() + "-");
+					}else {
+						display.setText(display.getText() + " - ");
+					}
+				} else {
+					display.setText(display.getText() + " " + input_text + " ");
 				}
-
-				String[] parts = input.split("\\s"); 
-				num1 = Integer.parseInt(parts[0]); 
-				for (int i = 1; i < parts.length; i += 2) {
-					operation = parts[i].charAt(0); 
-					num2 = Integer.parseInt(parts[i + 1]); 
-					operation(); 
-					num1 = result; 
-				}
-			} catch (ArithmeticException zero) {
+			} else if (source == reset) {
+				respuesta = display.getText();
+				num1 = 0;
+				num2 = 0;
 				result = 0;
-				display.setText("Err div x 0");
-			} catch (Exception ex) {
-				display.setText("Error");
+				operation = '\0';
+				display.setText("");
+			}else if(source == this.ans) {
+				display.setText(respuesta);
+			}else if (source == this.retroceder) {
+				int cadena = display.getText().length();
+				String borrar = display.getText().substring(0, cadena - 1);
+				display.setText(borrar);
+			} else if (source == this.equal || source == this.raiz) {
+				String input = display.getText();
+				String[] cadPartida = input.split("(?<=\\d)\\s+(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");				if (cadPartida.length >= 3) {
+			        num1 = Integer.parseInt(cadPartida[0]);
+			        num2 = Integer.parseInt(cadPartida[2]);
+			        operation = cadPartida[1].charAt(0);
+			        operation();
+			    } else if (cadPartida.length == 2 && source == this.raiz) {
+			        num1 = Integer.parseInt(cadPartida[0]);
+			        operation = '√';
+			        operation();
+			    } else {
+			        display.setText("Error de formato");
+			    }
+
+			} else {
+				display.setText(display.getText() + input_text);
 			}
-		}
-		else if (source == reset) {
-			num1 = 0;
-			num2 = 0;
+
+		} catch (ArithmeticException zero) {
 			result = 0;
-			operation = '\0';
-			display.setText(""); 
+			display.setText("Err div x 0");
+		} catch (Exception ex) {
+			display.setText("Error");
 		}
 	}
 }
