@@ -75,8 +75,8 @@ public class Engine extends JFrame implements ActionListener {
 	}
 
 	// Almacenar temporalmente ciertos valores
-	private int num1, num2, result;
-	private String respuesta, base;
+	private int result, baseActual;
+	private String num1, num2, respuesta, base;
 	private char operation;
 
 	/**
@@ -300,54 +300,81 @@ public class Engine extends JFrame implements ActionListener {
 
 	}
 
-	public void cambioBase() {
+	public void cambioBase(String base) {
 		switch (base) {
 		case "B2":
-			this.basePanel.setText("Base: binaria");
+			baseActual = 2;
+			this.basePanel.setText("Base: Binaria");
 			break;
 		case "B8":
-			this.basePanel.setText("Base: octal");
+			baseActual = 8;
+			this.basePanel.setText("Base: Octal");
 			break;
 		case "B10":
-			this.basePanel.setText("Base: decimal");
+			baseActual = 10;
+			this.basePanel.setText("Base: Decimal");
 			break;
 		case "B16":
-			this.basePanel.setText("Base: hexadecimal");
+			baseActual = 16;
+			this.basePanel.setText("Base: Hexadecimal");
 			break;
+		default:
+			baseActual = 10;
+			this.basePanel.setText("Base: Decimal");
 		}
 	}
+
+	public int convertToDecimal(String input, int base) {
+	    return Integer.parseInt(input.toUpperCase(), base);
+	}
+
+	public String convertFromDecimal(int number, int base) {
+	    return Integer.toString(number, base).toUpperCase();
+	}
+
 
 	/**
 	 * Metodo que comprueba que operacion se tiene que realizar
 	 */
-	public void operation() {
-		switch (this.operation) {
+	public void operation(String num1, String num2, char operator, int base) {
+		int decimal1 = convertToDecimal(num1, base);
+		int decimal2 = convertToDecimal(num2, base);
+		int result = 0;
+
+		switch (operator) {
 		case '+':
-			this.result = this.num1 + this.num2;
-			display.setText(String.valueOf(result));
+			result = decimal1 + decimal2;
 			break;
 		case '-':
-			this.result = this.num1 - this.num2;
-			display.setText(String.valueOf(result));
+			result = decimal1 - decimal2;
 			break;
 		case 'x':
-			this.result = this.num1 * this.num2;
-			display.setText(String.valueOf(result));
+			result = decimal1 * decimal2;
 			break;
 		case '÷':
-			this.result = this.num1 / this.num2;
-			display.setText(String.valueOf(result));
-			break;
-		case '√':
-			this.result = (int) Math.sqrt(num1);
-			display.setText(String.valueOf(result));
+			if (decimal2 != 0) {
+				result = decimal1 / decimal2;
+			} else {
+				display.setText("Err div x 0");
+				return;
+			}
 			break;
 		case '^':
-			this.result = (int) Math.pow(num1, num2);
-			display.setText(String.valueOf(result));
+			result = (int) Math.pow(decimal1, decimal2);
 			break;
+		case '√':
+			if (decimal1 >= 0) {
+				result = (int) Math.sqrt(decimal1);
+			} else {
+				display.setText("Err raíz negativa");
+				return;
+			}
+			break;
+		default:
+			display.setText("Operación inválida");
+			return;
 		}
-
+		display.setText(convertFromDecimal(result, base));
 	}
 
 	/**
@@ -360,13 +387,19 @@ public class Engine extends JFrame implements ActionListener {
 		String input_text = e.getActionCommand();
 
 		try {
-
-			if (source == this.b2 || source == this.b8 || source == this.b10 || source == this.b16) {
-				this.base = input_text;
-				cambioBase();
+			if (source == this.b2) {
+				cambioBase("B2");
+			} else if (source == this.b8) {
+				cambioBase("B8");
+			} else if (source == this.b10) {
+				cambioBase("B10");
+			} else if (source == this.b16) {
+				cambioBase("B16");
 			} else if (source == this.add || source == this.subtract || source == this.divide || source == this.multiply
 					|| source == this.elevar) {
+				// Añade el operador al texto
 				if (source == this.subtract) {
+					// Maneja el signo negativo
 					if (display.getText().isEmpty()
 							|| "+x√÷^ ".contains(display.getText().substring(display.getText().length() - 1))) {
 						display.setText(display.getText() + "-");
@@ -376,45 +409,40 @@ public class Engine extends JFrame implements ActionListener {
 				} else {
 					display.setText(display.getText() + " " + input_text + " ");
 				}
-			} else if (source == this.casioButton) {
-				try {
-					Desktop desktop = Desktop.getDesktop();
-					if (desktop.isSupported(Desktop.Action.BROWSE)) {
-						desktop.browse(new URI("https://www.casio.com/es/scientific-calculators/"));
-					}
-				} catch (IOException | URISyntaxException ex) {
-					ex.printStackTrace();
-				}
 			} else if (source == this.reset) {
+				// Reinicia la calculadora
 				respuesta = display.getText();
-				num1 = 0;
-				num2 = 0;
+				num1 = "0";
+				num2 = "0";
 				result = 0;
 				operation = '\0';
 				display.setText("");
-			} else if (source == this.ans) {
-				display.setText(respuesta);
 			} else if (source == this.retroceder) {
+				// Borra el último carácter
 				int cadena = display.getText().length();
-				String borrar = display.getText().substring(0, cadena - 1);
-				display.setText(borrar);
+				if (cadena > 0) {
+					String borrar = display.getText().substring(0, cadena - 1);
+					display.setText(borrar);
+				}
 			} else if (source == this.equal || source == this.raiz) {
-				String input = display.getText();
-				String[] cadPartida = input.split("(?<=\\d)\\s+(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");
+				// Procesa la operación
+				String input = display.getText().trim();
+				String[] cadPartida = input.split("(?<=\\d)\\s*(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");
+
 				if (cadPartida.length >= 3) {
-					num1 = Integer.parseInt(cadPartida[0]);
-					num2 = Integer.parseInt(cadPartida[2]);
+					num1 = cadPartida[0];
 					operation = cadPartida[1].charAt(0);
-					operation();
+					num2 = cadPartida[2];
+					operation(num1, num2, operation, baseActual);
 				} else if (cadPartida.length == 1 && source == this.raiz) {
-					num1 = Integer.parseInt(cadPartida[0]);
+					num1 = cadPartida[0];
 					operation = '√';
-					operation();
+					operation(num1, "0", operation, baseActual);
 				} else {
 					display.setText("Error de formato");
 				}
-
 			} else {
+				// Entrada de números y caracteres
 				display.setText(display.getText() + input_text);
 			}
 
