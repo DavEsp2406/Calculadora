@@ -156,13 +156,14 @@ public class Engine extends JFrame implements ActionListener {
 		this.basePanel.setHorizontalAlignment(JTextField.CENTER);
 		this.basePanel.setEditable(false);
 		this.basePanel.setBackground(Color.white);
+		this.basePanel.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		this.basePanel.setBorder(BorderFactory.createEmptyBorder());
 		this.subDisplay.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		this.subDisplay.add(this.basePanel, BorderLayout.CENTER);
 		this.displayPanel.add(this.subDisplay, BorderLayout.NORTH);
 
-		this.casioButton.setBackground(Color.orange);
+		this.casioButton.setBackground(Color.magenta);
 		this.casioButton.setBorderPainted(false);
 		this.subDisplay.add(this.casioButton, BorderLayout.EAST);
 
@@ -237,15 +238,16 @@ public class Engine extends JFrame implements ActionListener {
 			break;
 		case ButtonType.BASE:
 			_button.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			_button.setBackground(Color.RED);
+			_button.setBackground(new Color(20,  82, 138));
+			_button.setForeground(Color.WHITE);
 			break;
 		case ButtonType.HEXLET:
 			_button.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			_button.setBackground(Color.RED);
+			_button.setBackground(new Color(115, 250, 193));
 			break;
 		case ButtonType.CUSTOM:
-			_button.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			_button.setBackground(Color.RED);
+			_button.setFont(new Font("SansSerif", Font.BOLD, 20));
+			_button.setBackground(new Color(193, 115, 250));
 			break;
 		case ButtonType.EQUAL:
 			_button.setFont(new Font("SansSerif", Font.BOLD, 20));
