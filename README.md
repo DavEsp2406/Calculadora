@@ -91,7 +91,7 @@ Este proyecto es una **calculadora gráfica** implementada en Java utilizando la
 En esta nueva versión se implementan nuevas funcionalidades como el cambio de bases, ventanas emergentes, 
 y varios botones que añaden mas funciones a la calculadora
 
-<img src="assets/calcuv2.gif" alt="Ejemplo de uso de la calculadora v2" height="400" />
+<img src="assets/calcv2.gif" alt="Ejemplo de uso de la calculadora v2" height="400" />
   
 ---
 
