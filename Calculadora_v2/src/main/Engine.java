@@ -238,7 +238,7 @@ public class Engine extends JFrame implements ActionListener {
 			break;
 		case ButtonType.BASE:
 			_button.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			_button.setBackground(new Color(20,  82, 138));
+			_button.setBackground(new Color(20, 82, 138));
 			_button.setForeground(Color.WHITE);
 			break;
 		case ButtonType.HEXLET:
@@ -301,7 +301,10 @@ public class Engine extends JFrame implements ActionListener {
 		this.b16.addActionListener(this);
 
 	}
-
+	/**
+	 * Metodo que cambia la base actual y actualiza el Panel de la calculadora
+	 * @param base
+	 */
 	public void cambioBase(String base) {
 		switch (base) {
 		case "B2":
@@ -325,18 +328,31 @@ public class Engine extends JFrame implements ActionListener {
 			this.basePanel.setText("Base: Decimal");
 		}
 	}
-
+	/**
+	 * 
+	 * @param input
+	 * @param base
+	 * @return numero convertido a decimal
+	 */
 	public int convertToDecimal(String input, int base) {
-	    return Integer.parseInt(input.toUpperCase(), base);
+		return Integer.parseInt(input.toUpperCase(), base);
 	}
-
+	/**
+	 * 
+	 * @param number
+	 * @param base 
+	 * @return el numero convertido del decimal a la base indicada
+	 */
 	public String convertFromDecimal(int number, int base) {
-	    return Integer.toString(number, base).toUpperCase();
+		return Integer.toString(number, base).toUpperCase();
 	}
-
 
 	/**
-	 * Metodo que comprueba que operacion se tiene que realizar
+	 * Metodo que realiza las operaciones
+	 * @param num1
+	 * @param num2
+	 * @param operator
+	 * @param base
 	 */
 	public void operation(String num1, String num2, char operator, int base) {
 		int decimal1 = convertToDecimal(num1, base);
@@ -399,9 +415,7 @@ public class Engine extends JFrame implements ActionListener {
 				cambioBase("B16");
 			} else if (source == this.add || source == this.subtract || source == this.divide || source == this.multiply
 					|| source == this.elevar) {
-				// Añade el operador al texto
 				if (source == this.subtract) {
-					// Maneja el signo negativo
 					if (display.getText().isEmpty()
 							|| "+x√÷^ ".contains(display.getText().substring(display.getText().length() - 1))) {
 						display.setText(display.getText() + "-");
@@ -411,8 +425,26 @@ public class Engine extends JFrame implements ActionListener {
 				} else {
 					display.setText(display.getText() + " " + input_text + " ");
 				}
-			} else if (source == this.reset) {
-				// Reinicia la calculadora
+			} else if (source == this.owner || source == this.info) {
+				String mensaje;
+				if (source == this.owner) {
+					mensaje = "Calculadora desarrollada por David"; 
+					new VentanaEmergente(this, mensaje).setVisible(true);
+				}else if (source == this.info) {
+					mensaje = "Info sobre la calculadora"; 
+					new VentanaEmergente(this, mensaje).setVisible(true);
+				}
+			}else if(source == this.casioButton) {
+                try {
+                    Desktop desktop = Desktop.getDesktop();
+                    if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                        desktop.browse(new URI("https://www.casio.com/es/scientific-calculators/"));
+                    }
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+			}
+			else if (source == this.reset) {
 				respuesta = display.getText();
 				num1 = "0";
 				num2 = "0";
@@ -420,14 +452,12 @@ public class Engine extends JFrame implements ActionListener {
 				operation = '\0';
 				display.setText("");
 			} else if (source == this.retroceder) {
-				// Borra el último carácter
 				int cadena = display.getText().length();
 				if (cadena > 0) {
 					String borrar = display.getText().substring(0, cadena - 1);
 					display.setText(borrar);
 				}
 			} else if (source == this.equal || source == this.raiz) {
-				// Procesa la operación
 				String input = display.getText().trim();
 				String[] cadPartida = input.split("(?<=\\d)\\s*(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");
 
@@ -444,7 +474,6 @@ public class Engine extends JFrame implements ActionListener {
 					display.setText("Error de formato");
 				}
 			} else {
-				// Entrada de números y caracteres
 				display.setText(display.getText() + input_text);
 			}
 
