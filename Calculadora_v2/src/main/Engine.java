@@ -82,7 +82,7 @@ public class Engine extends JFrame implements ActionListener {
 	/**
 	 * Constructora de la calculadora
 	 * 
-	 * @param msg
+	 * 
 	 */
 	public Engine() {
 		this.frame = new JFrame();
@@ -355,46 +355,55 @@ public class Engine extends JFrame implements ActionListener {
 	 * @param base
 	 */
 	public void operation(String num1, String num2, char operator, int base) {
-		int decimal1 = convertToDecimal(num1, base);
-		int decimal2 = convertToDecimal(num2, base);
-		int result = 0;
+	    try {
+	        // Convertir los números desde la base actual a decimal
+	        int decimal1 = convertToDecimal(num1, base);
+	        int decimal2 = convertToDecimal(num2, base);
+	        int result = 0;
 
-		switch (operator) {
-		case '+':
-			result = decimal1 + decimal2;
-			break;
-		case '-':
-			result = decimal1 - decimal2;
-			break;
-		case 'x':
-			result = decimal1 * decimal2;
-			break;
-		case '÷':
-			if (decimal2 != 0) {
-				result = decimal1 / decimal2;
-			} else {
-				display.setText("Err div x 0");
-				return;
-			}
-			break;
-		case '^':
-			result = (int) Math.pow(decimal1, decimal2);
-			break;
-		case '√':
-			if (decimal1 >= 0) {
-				result = (int) Math.sqrt(decimal1);
-			} else {
-				display.setText("Err raíz negativa");
-				return;
-			}
-			break;
-		default:
-			display.setText("Operación inválida");
-			return;
-		}
-		display.setText(convertFromDecimal(result, base));
+	        // Realizar la operación correspondiente
+	        switch (operator) {
+	            case '+':
+	                result = decimal1 + decimal2;
+	                break;
+	            case '-':
+	                result = decimal1 - decimal2;
+	                break;
+	            case 'x':
+	                result = decimal1 * decimal2;
+	                break;
+	            case '÷':
+	                if (decimal2 != 0) {
+	                    result = decimal1 / decimal2;
+	                } else {
+	                    display.setText("Err div x 0");
+	                    return;
+	                }
+	                break;
+	            case '^':
+	                result = (int) Math.pow(decimal1, decimal2);
+	                break;
+	            case '√':
+	                if (decimal1 >= 0) {
+	                    result = (int) Math.sqrt(decimal1);
+	                } else {
+	                    display.setText("Err raíz negativa");
+	                    return;
+	                }
+	                break;
+	            default:
+	                display.setText("Operación inválida");
+	                return;
+	        }
+
+	        // Convertir el resultado desde decimal a la base actual
+	        display.setText(convertFromDecimal(result, base));
+	    } catch (NumberFormatException ex) {
+	        display.setText("Error de formato");
+	    } catch (Exception ex) {
+	        display.setText("Error inesperado");
+	    }
 	}
-
 	/**
 	 * Este metodo se encarga de obtener la informacion que haya en el display
 	 * (numeros introducidos y operacion que se debe realizar) y llamar al metodo
@@ -405,14 +414,28 @@ public class Engine extends JFrame implements ActionListener {
 		String input_text = e.getActionCommand();
 
 		try {
-			if (source == this.b2) {
-				cambioBase("B2");
-			} else if (source == this.b8) {
-				cambioBase("B8");
-			} else if (source == this.b10) {
-				cambioBase("B10");
-			} else if (source == this.b16) {
-				cambioBase("B16");
+			if (source == this.b2 || source == this.b8 || source == this.b10 || source == this.b16) {
+			    try {
+			    	String nuevaBase;
+			    	if (source == this.b2) {
+			    	    nuevaBase = "B2";
+			    	} else if (source == this.b8) {
+			    	    nuevaBase = "B8";
+			    	} else if (source == this.b10) {
+			    	    nuevaBase = "B10";
+			    	} else {
+			    	    nuevaBase = "B16";
+			    	}
+			        if (!this.display.getText().isEmpty() && !this.display.getText().trim().matches(".*[+x÷^√-].*")) {
+			            int currentValue = convertToDecimal(this.display.getText().trim(), this.baseActual);
+			            cambioBase(nuevaBase);
+			            this.display.setText(convertFromDecimal(currentValue, this.baseActual));
+			        } else {
+			            cambioBase(nuevaBase);
+			        }
+			    } catch (NumberFormatException ex) {
+			        this.display.setText("Syntax ERROR");
+			    }
 			} else if (source == this.add || source == this.subtract || source == this.divide || source == this.multiply
 					|| source == this.elevar) {
 				if (source == this.subtract) {
@@ -459,20 +482,22 @@ public class Engine extends JFrame implements ActionListener {
 				}
 			} else if (source == this.equal || source == this.raiz) {
 				String input = display.getText().trim();
-				String[] cadPartida = input.split("(?<=\\d)\\s*(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");
 
-				if (cadPartida.length >= 3) {
-					num1 = cadPartida[0];
-					operation = cadPartida[1].charAt(0);
-					num2 = cadPartida[2];
-					operation(num1, num2, operation, baseActual);
-				} else if (cadPartida.length == 1 && source == this.raiz) {
-					num1 = cadPartida[0];
-					operation = '√';
-					operation(num1, "0", operation, baseActual);
-				} else {
-					display.setText("Error de formato");
-				}
+			    // Separar números y operadores utilizando una expresión regular
+			    String[] cadPartida = input.split("(?<=\\d|[A-Fa-f])\\s*(?=[+x÷^√-])|(?<=[+x÷^√-])\\s+");
+
+			    if (cadPartida.length >= 3) {
+			        num1 = cadPartida[0];
+			        operation = cadPartida[1].charAt(0);
+			        num2 = cadPartida[2];
+			        operation(num1, num2, operation, baseActual);
+			    } else if (cadPartida.length == 1 && source == this.raiz) {
+			        num1 = cadPartida[0];
+			        operation = '√';
+			        operation(num1, "0", operation, baseActual);
+			    } else {
+			        display.setText("Error de formato");
+			    }
 			} else {
 				display.setText(display.getText() + input_text);
 			}
